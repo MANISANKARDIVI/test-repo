@@ -4,11 +4,8 @@ on:
   push:
     branches:
       - main
-      - dev
-  pull_request:
-    branches:
-      - main
-      - dev
+    paths:
+      - 'node/**'
     paths-ignore:
       - '.github/workflows/go.yml'
 
