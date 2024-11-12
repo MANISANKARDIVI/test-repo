@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd node  # Ensure you're in the correct folder where package.json is located
-          npm install
+          npm installX
 
       # Step 5: Build code
       - name: Build code
