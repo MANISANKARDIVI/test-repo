@@ -10,7 +10,7 @@ on:
       - main
       - dev
     paths-ignore:
-      - '.github/workflows/go.yaml'
+      - '.github/workflows/go.yml'
 
 jobs:
   build-and-deploy:
