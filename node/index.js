@@ -1,5 +1,5 @@
 // src/index.js
-// hello from soubOS
+// hello from soubOS.
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000; // Set port to 3000 or use PORT env variable
