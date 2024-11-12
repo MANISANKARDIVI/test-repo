@@ -20,17 +20,19 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.2'
-      
-      - name: Install dependencies
+
+      - name: change directory 
         run: |
           cd go-project
+          
+      - name: Install dependencies
+        run: |
           go mod download
           
       - name: Test with the Go CLI
         run: |
           pwd
           ls -la
-          cd go-project
           go test ./...
 
       - name: Build the application
