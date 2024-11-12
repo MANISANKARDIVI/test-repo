@@ -24,6 +24,7 @@ jobs:
       - name: change directory 
         run: |
           cd go-project
+          ls -la
           
       - name: Install dependencies
         run: |
