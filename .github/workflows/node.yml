@@ -11,6 +11,8 @@ on:
       - dev
     paths:
       - 'node/**'
+    paths-ignore:
+      - '.github/workflows/go.yaml'
 
 jobs:
   build-and-deploy:
