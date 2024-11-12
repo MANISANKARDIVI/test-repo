@@ -1,0 +1,88 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js with caching for dependencies
+      - name: Set up Node.js with cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      # Step 3: Install dependencies and build code
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build code
+        run: npm run build
+
+      # Step 4: Save the build output as an artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: dist/  # Replace 'dist/' with the correct output directory
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step 5: Log in to Docker Hub (or other registry)
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: Read version from VERSION file
+        id: read_version
+        run: |
+          # Read the entire content of the VERSION file and trim any surrounding whitespace
+          VERSION=$(cat VERSION | xargs)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Version extracted: $VERSION"
+      # Step 6: Build the Docker image
+      - name: Build Docker image with extracted version
+        run: |
+          docker build -t soubarniya/mynode:${{ env.VERSION }} .
+          docker push soubarniya/mynode:${{ env.VERSION }}
+      - name: Update Kubernetes manifest
+        run: |
+          pwd
+          ls -la
+          git clone https://github.com/Soubarniya/argocd.git
+          ls -la
+          cd argocd
+          ls -la
+          sed -i "s|image: soubarniya/mynode:.*|image: soubarniya/mynode:${{ env.VERSION }}|" node.yaml
+          git status
+          git diff
+          cat node.yaml
+          # Configure Git
+          # git init .
+          git config --global user.email "leosphere2001@gmail.com"
+          git config --global user.name "Soubarniya"
+          
+          # Commit and push changes if there’s an update
+          if git diff --exit-code --quiet; then
+            echo "No changes to commit."
+          else
+            git add node.yaml
+            git commit -m "Updated node.yaml with version ${{ env.VERSION }} | GitHub Actions Pipeline"
+            git push origin main
+          fi
