@@ -29,12 +29,20 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
 
-      # Step 3: Install dependencies and build code
-      - name: Install dependencies
-        run: npm install
+      - name: Navigate to node directory
+        run: cd node
 
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: |
+          cd node  # Ensure you're in the correct folder where package.json is located
+          npm install
+
+      # Step 5: Build code
       - name: Build code
-        run: npm run build
+        run: |
+          cd node  # Ensure you're in the correct folder where package.json is located
+          npm run build
 
       # Step 4: Save the build output as an artifact
       - name: Upload build artifact
