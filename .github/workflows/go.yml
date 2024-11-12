@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'go-project/**'
+    paths-ignore:
+      - '.github/workflows/node.yaml'
 
 jobs:
   build_and_deploy:
