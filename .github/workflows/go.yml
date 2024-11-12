@@ -20,27 +20,20 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.2'
-
-      - name: change directory 
-        run: |
-          pwd
-          cd go-project
-          ls -la
           
       - name: Install dependencies
         run: |
-          pwd
-          ls -la
+          cd go-project
           go mod download
           
       - name: Test with the Go CLI
         run: |
-          pwd
-          ls -la
+          cd go-project
           go test ./...
 
       - name: Build the application
         run: |
+          cd go-project
           mkdir -p dist
           go build -o dist/main ./...
       - name: Upload artifacts
@@ -66,10 +59,12 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Build and push Docker image
         run: |
+          cd go-project
           docker build -t manisankardivi/new:${{ env.VERSION }} .
           docker push manisankardivi/new:${{ env.VERSION }}
       - name: Update Image Version and Push Changes
         run: |
+          
           git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/manisankar-divi/k8s-repo.git
           cd k8s-repo
       
