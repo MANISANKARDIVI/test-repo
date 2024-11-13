@@ -60,6 +60,41 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Step 3: Install Trivy
+      - name: Install Trivy
+        run: |
+          sudo apt-get install wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy
+      # Step 4: Cache the Trivy vulnerability database
+      - name: Cache Trivy DB
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/trivy/db
+          key: ${{ runner.os }}-trivy-db-${{ hashFiles('**/*.go') }}  # Change to a suitable cache key
+
+      # Step 5: Run Trivy vulnerability scan on Docker image
+      - name: Run Docker image vulnerability scan with Trivy
+        run: |
+          # Check if Trivy database exists, and decide whether to skip update or not
+          if [ ! -d ~/.cache/trivy/db ]; then
+            echo "Trivy database not found. Running full scan and fetching DB."
+            trivy image -f json -o trivy.json --severity HIGH,CRITICAL --exit-code 1 manisankardivi/new:latest
+          else
+            echo "Trivy database found. Skipping DB update."
+            trivy image -f json -o trivy.json --severity HIGH,CRITICAL --exit-code 1 --skip-db-update manisankardivi/new:latest
+          fi
+          
+      # Step 6: Upload Trivy results to GitHub
+      - name: Upload Trivy results to GitHub
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-results
+          path: trivy.json
+
+
       - name: Read version from VERSION file
         id: read_version
         run: |
