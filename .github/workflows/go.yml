@@ -37,6 +37,7 @@ jobs:
           cd go-project
           mkdir -p dist
           go build -o dist/main ./...
+          
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -44,6 +45,12 @@ jobs:
           path: dist
           if-no-files-found: warn
 
+      # Verifying Gitleaks
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts.
+          
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
