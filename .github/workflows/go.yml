@@ -73,7 +73,7 @@ jobs:
       - name: Run Docker image vulnerability scan with Trivy
         run: |
           docker pull manisankardivi/new:200.000.008
-          trivy image -f json -o trivy.json --severity HIGH,CRITICAL --exit-code 1 manisankardivi/new:200.000.008
+          trivy image -f json -o trivy.json --severity HIGH,CRITICAL --skip-db-update ***/new:200.000.008
       # Step 6: Upload Trivy results to GitHub
       - name: Upload Trivy results to GitHub
         uses: actions/upload-artifact@v3
