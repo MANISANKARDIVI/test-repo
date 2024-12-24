@@ -65,17 +65,9 @@ jobs:
       - name: Read version from VERSION file
         id: read_version
         run: |
-          if [[ -f VERSION ]]; then
-          VERSION=$(cat VERSION | xargs) # Read the content of the file and trim whitespace
-          else
-            VERSION="latest" # Default value if the file is missing
-          fi
+          VERSION=$(cat go-project/VERSION | xargs)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          
-          # VERSION=$(cat go-project/VERSION | xargs)
-          # echo "VERSION=$VERSION" >> $GITHUB_ENV
-          # cat go-project/VERSION
-          # cat VERSION
+          cat go-project/VERSION
       - name: Build and push Docker image
         run: |
           cd go-project
