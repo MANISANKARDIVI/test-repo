@@ -60,8 +60,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-
-
       - name: Read version from VERSION file
         id: read_version
         run: |
@@ -71,30 +69,31 @@ jobs:
       - name: Build and push Docker image
         run: |
           cd go-project
-          docker build -t manisankardivi/new:${{ env.VERSION }} .
+          docker buildx build -t manisankardivi/new:${{ env.VERSION }} .
+          docker images
           docker push manisankardivi/new:${{ env.VERSION }}
-      - name: Update Image Version and Push Changes
-        run: |
+      # - name: Update Image Version and Push Changes
+      #   run: |
           
-          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/manisankar-divi/k8s-repo.git
-          cd k8s-repo
+      #     git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/manisankar-divi/k8s-repo.git
+      #     cd k8s-repo
       
-          # Update image in manifest.yaml
-          sed -i "s|image: manisankardivi/new:.*|image: manisankardivi/new:${{ env.VERSION }}|" manifest.yaml
+      #     # Update image in manifest.yaml
+      #     sed -i "s|image: manisankardivi/new:.*|image: manisankardivi/new:${{ env.VERSION }}|" manifest.yaml
       
-          # Verify changes
-          git status
-          git diff
+      #     # Verify changes
+      #     git status
+      #     git diff
       
-          # Configure Git
-          git config --global user.email "manisankar-divi@gmail.com"
-          git config --global user.name "manisankar-divi"
+      #     # Configure Git
+      #     git config --global user.email "manisankar-divi@gmail.com"
+      #     git config --global user.name "manisankar-divi"
       
-          # Commit and push changes if there’s an update blqw blaw
-          if git diff --exit-code --quiet; then
-            echo "No changes to commit."
-          else
-            git add manifest.yaml
-            git commit -m "Updated manifest.yaml with version ${{ env.VERSION }} | GitHub Actions Pipeline"
-            git push origin main
-          fi
+      #     # Commit and push changes if there’s an update blqw blaw
+      #     if git diff --exit-code --quiet; then
+      #       echo "No changes to commit."
+      #     else
+      #       git add manifest.yaml
+      #       git commit -m "Updated manifest.yaml with version ${{ env.VERSION }} | GitHub Actions Pipeline"
+      #       git push origin main
+      #     fi
