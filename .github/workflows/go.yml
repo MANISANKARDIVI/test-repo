@@ -77,7 +77,12 @@ jobs:
         
       - name: Build and push Docker image
         run: |
+          # Debugging commands
+          pwd  # Print current directory
+          ls -al  # List all files in the current directory
+          ls -al go-project  # List all files in the go-project directory (if it exists)
           cd go-project
+          ls 
           docker buildx build --load -t manisankardivi/new:${{ env.VERSION }} .
           docker images
           docker push manisankardivi/new:${{ env.VERSION }}
