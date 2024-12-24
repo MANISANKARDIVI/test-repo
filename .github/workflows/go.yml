@@ -17,39 +17,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Set up Go
-      #   uses: actions/setup-go@v5
-      #   with:
-      #     go-version: '1.23.2'
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.2'
           
-      # - name: Install dependencies
-      #   run: |
-      #     cd go-project
-      #     go mod download
+      - name: Install dependencies
+        run: |
+          cd go-project
+          go mod download
           
-      # - name: Test with the Go CLI
-      #   run: |
-      #     cd go-project
-      #     go test ./...
+      - name: Test with the Go CLI
+        run: |
+          cd go-project
+          go test ./...
 
-      # - name: Build the application
-      #   run: |
-      #     cd go-project
-      #     mkdir -p dist
-      #     go build -o dist/main ./...
+      - name: Build the application
+        run: |
+          cd go-project
+          mkdir -p dist
+          go build -o dist/main ./...
           
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: artifact
-      #     path: dist
-      #     if-no-files-found: warn
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact
+          path: dist
+          if-no-files-found: warn
 
-      # # Verifying Gitleaks
-      # - uses: gitleaks/gitleaks-action@v2
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts.
+      # Verifying Gitleaks
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts.
           
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -60,54 +60,40 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Step 3: Install Trivy
-      - name: Install Trivy
+
+
+      - name: Read version from VERSION file
+        id: read_version
         run: |
-          sudo apt-get install wget apt-transport-https gnupg lsb-release
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update
-          sudo apt-get install trivy
-
-      # Step 5: Run Trivy vulnerability scan on Docker image
-      - name: Run Docker image vulnerability scan with Trivy
+          VERSION=$(cat VERSION | xargs)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Build and push Docker image
         run: |
-          docker pull manisankardivi/new:200.000.008
-          trivy image --severity HIGH,CRITICAL --exit-code 1 manisankardivi/new:200.000.008
-
-
-      # - name: Read version from VERSION file
-      #   id: read_version
-      #   run: |
-      #     VERSION=$(cat VERSION | xargs)
-      #     echo "VERSION=$VERSION" >> $GITHUB_ENV
-      # - name: Build and push Docker image
-      #   run: |
-      #     cd go-project
-      #     docker build -t manisankardivi/new:${{ env.VERSION }} .
-      #     docker push manisankardivi/new:${{ env.VERSION }}
-      # - name: Update Image Version and Push Changes
-      #   run: |
+          cd go-project
+          docker build -t manisankardivi/new:${{ env.VERSION }} .
+          docker push manisankardivi/new:${{ env.VERSION }}
+      - name: Update Image Version and Push Changes
+        run: |
           
-      #     git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/manisankar-divi/k8s-repo.git
-      #     cd k8s-repo
+          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/manisankar-divi/k8s-repo.git
+          cd k8s-repo
       
-      #     # Update image in manifest.yaml
-      #     sed -i "s|image: manisankardivi/new:.*|image: manisankardivi/new:${{ env.VERSION }}|" manifest.yaml
+          # Update image in manifest.yaml
+          sed -i "s|image: manisankardivi/new:.*|image: manisankardivi/new:${{ env.VERSION }}|" manifest.yaml
       
-      #     # Verify changes
-      #     git status
-      #     git diff
+          # Verify changes
+          git status
+          git diff
       
-      #     # Configure Git
-      #     git config --global user.email "manisankar-divi@gmail.com"
-      #     git config --global user.name "manisankar-divi"
+          # Configure Git
+          git config --global user.email "manisankar-divi@gmail.com"
+          git config --global user.name "manisankar-divi"
       
-      #     # Commit and push changes if there’s an update blqw blaw
-      #     if git diff --exit-code --quiet; then
-      #       echo "No changes to commit."
-      #     else
-      #       git add manifest.yaml
-      #       git commit -m "Updated manifest.yaml with version ${{ env.VERSION }} | GitHub Actions Pipeline"
-      #       git push origin main
-      #     fi
+          # Commit and push changes if there’s an update blqw blaw
+          if git diff --exit-code --quiet; then
+            echo "No changes to commit."
+          else
+            git add manifest.yaml
+            git commit -m "Updated manifest.yaml with version ${{ env.VERSION }} | GitHub Actions Pipeline"
+            git push origin main
+          fi
