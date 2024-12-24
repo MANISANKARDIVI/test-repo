@@ -61,9 +61,8 @@ jobs:
         run: |
           # Debugging commands
           pwd  # Print current directory
-          ls -al  # List all files in the current directory
-          ls -al go-project  # List all files in the go-project directory (if it exists)
           cd go-project
+          ls -la
           if [ -f VERSION ]; then
             VERSION=$(cat VERSION | xargs)
             echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -71,10 +70,7 @@ jobs:
             echo "VERSION file not found in go-project!"
             exit 1
           fi
-
-          # VERSION=$(cat go-project/VERSION | xargs)
-          # echo "VERSION=$VERSION" >> $GITHUB_ENV
-          cat go-project/VERSION
+          cat VERSION
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
