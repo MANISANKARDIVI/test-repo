@@ -50,9 +50,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts.
-          
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -66,10 +63,14 @@ jobs:
           VERSION=$(cat go-project/VERSION | xargs)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           cat go-project/VERSION
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
       - name: Build and push Docker image
         run: |
           cd go-project
-          docker build -t manisankardivi/new:${{ env.VERSION }} .
+          docker buildx build -t manisankardivi/new:${{ env.VERSION }} .
           docker images
           docker push manisankardivi/new:${{ env.VERSION }}
       # - name: Update Image Version and Push Changes
