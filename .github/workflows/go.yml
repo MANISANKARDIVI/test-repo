@@ -70,7 +70,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           cd go-project
-          docker buildx build -t manisankardivi/new:${{ env.VERSION }} .
+          docker buildx --load -t manisankardivi/new:${{ env.VERSION }} .
           docker images
           docker push manisankardivi/new:${{ env.VERSION }}
       # - name: Update Image Version and Push Changes
