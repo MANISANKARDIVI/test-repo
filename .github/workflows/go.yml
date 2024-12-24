@@ -67,6 +67,8 @@ jobs:
         run: |
           VERSION=$(cat go-project/VERSION | xargs)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          cat go-project/VERSION
+          cat VERSION
       - name: Build and push Docker image
         run: |
           cd go-project
