@@ -59,14 +59,15 @@ jobs:
       - name: Read version from VERSION file
         id: read_version
         run: |
-          cd go-project
+          cd go-project || { echo "go-project directory not found!"; exit 1; }
           if [ -f VERSION ]; then
-          VERSION=$(cat VERSION | xargs)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+            VERSION=$(cat VERSION | xargs)
+            echo "VERSION=$VERSION" >> $GITHUB_ENV
           else
-            echo "VERSION file not found!"
+            echo "VERSION file not found in go-project!"
             exit 1
           fi
+
           # VERSION=$(cat go-project/VERSION | xargs)
           # echo "VERSION=$VERSION" >> $GITHUB_ENV
           cat go-project/VERSION
