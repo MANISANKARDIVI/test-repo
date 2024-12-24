@@ -65,7 +65,7 @@ jobs:
       - name: Read version from VERSION file
         id: read_version
         run: |
-          VERSION=$(cat VERSION | xargs)
+          VERSION=$(cat go-project/VERSION | xargs)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Build and push Docker image
         run: |
