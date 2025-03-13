@@ -9,10 +9,9 @@ on:
       - '.github/workflows/go.yml'
       - 'go-project/**'
 
-
 jobs:
   build_and_deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,6 +36,7 @@ jobs:
           cd go-project
           mkdir -p dist
           go build -o dist/main ./...
+          
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -44,8 +44,11 @@ jobs:
           path: dist
           if-no-files-found: warn
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # Verifying Gitleaks
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}} # Only required for Organizations, not personal accounts..
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -56,35 +59,55 @@ jobs:
       - name: Read version from VERSION file
         id: read_version
         run: |
-          VERSION=$(cat VERSION | xargs)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          # Debugging commands
+          pwd  # Print current directory
+          cd go-project
+          ls -la
+          if [ -f VERSION ]; then
+            VERSION=$(cat VERSION | xargs)
+            echo "VERSION=$VERSION" >> $GITHUB_ENV
+          else
+            echo "VERSION file not found in go-project!"
+            exit 1
+          fi
+          cat VERSION
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
       - name: Build and push Docker image
         run: |
+          # Debugging commands
+          pwd  # Print current directory
+          ls -al  # List all files in the current directory
+          ls -al go-project  # List all files in the go-project directory (if it exists)
           cd go-project
-          docker build -t manisankardivi/new:${{ env.VERSION }} .
+          ls 
+          docker buildx build --load -t manisankardivi/new:${{ env.VERSION }} .
+          docker images
           docker push manisankardivi/new:${{ env.VERSION }}
-      - name: Update Image Version and Push Changes
-        run: |
+      # - name: Update Image Version and Push Changes
+      #   run: |
           
-          git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/manisankar-divi/k8s-repo.git
-          cd k8s-repo
+      #     git clone https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/manisankar-divi/k8s-repo.git
+      #     cd k8s-repo
       
-          # Update image in manifest.yaml
-          sed -i "s|image: manisankardivi/new:.*|image: manisankardivi/new:${{ env.VERSION }}|" manifest.yaml
+      #     # Update image in manifest.yaml
+      #     sed -i "s|image: manisankardivi/new:.*|image: manisankardivi/new:${{ env.VERSION }}|" manifest.yaml
       
-          # Verify changes
-          git status
-          git diff
+      #     # Verify changes
+      #     git status
+      #     git diff
       
-          # Configure Git
-          git config --global user.email "manisankar-divi@gmail.com"
-          git config --global user.name "manisankar-divi"
+      #     # Configure Git
+      #     git config --global user.email "manisankar-divi@gmail.com"
+      #     git config --global user.name "manisankar-divi"
       
-          # Commit and push changes if there’s an update blqw blaw
-          if git diff --exit-code --quiet; then
-            echo "No changes to commit."
-          else
-            git add manifest.yaml
-            git commit -m "Updated manifest.yaml with version ${{ env.VERSION }} | GitHub Actions Pipeline"
-            git push origin main
-          fi
+      #     # Commit and push changes if there’s an update blqw blaw
+      #     if git diff --exit-code --quiet; then
+      #       echo "No changes to commit."
+      #     else
+      #       git add manifest.yaml
+      #       git commit -m "Updated manifest.yaml with version ${{ env.VERSION }} | GitHub Actions Pipeline"
+      #       git push origin main
+      #     fi

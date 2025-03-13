@@ -3,14 +3,14 @@ name: node-pipeline
 on:
   push:
     branches:
-      - main
+      - production
     paths:
       - .github/workflows/node.yml
       - node/**
 
   pull_request:
     branches:
-      - main
+      - production
     paths:
       - .github/workflows/node.yml
       - node/**
