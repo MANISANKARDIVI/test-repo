@@ -101,7 +101,7 @@ jobs:
         run: |
           ls -la && ls k8s-test/node/production
           cd k8s-test
-          git config --global user.email "manisankardivi@gmail.com"
+          git config --global user.email "manisankar.divi@gmail.com"
           git config --global user.name "Mani"
           git add .
           if git diff --cached --exit-code --quiet; then
@@ -116,7 +116,7 @@ jobs:
       - name: Create and push new branch with version (if changes exist)
         if: env.SKIP_BRANCH == 'false' # Only run if changes exist
         run: |
-          NEW_BRANCH="node-aud-v$VERSION"
+          NEW_BRANCH="release/node-test-v$VERSION"
           cd k8s-test/node
           git checkout -b "$NEW_BRANCH"
 
