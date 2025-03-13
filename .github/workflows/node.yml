@@ -84,7 +84,7 @@ jobs:
       - name: Checkout Kubernetes repo
         run: |
           echo "Cloning Kubernetes repo..."
-          git remote set-url origin "https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/MANISANKARDIVI/k8s-test.git"
+          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/MANISANKARDIVI/k8s-test.git
           ls -la
           cd k8s-test
           git pull
@@ -93,7 +93,7 @@ jobs:
           ls -la
           echo "Using version: $VERSION"
           echo "Updating image version in deployment.yaml..."
-          sed -i "s|image: manisankardivi/node-test:.*|image: manisankardivi/node-test:${{ env.VERSION }}|" deployment.yaml
+          sed -i "s|image: manisankardivi/node-test:.*|image: manisankardivi/node-test:$VERSION|" deployment.yaml
           echo "Image Section after update:"
           cat deployment.yaml
 
@@ -120,7 +120,7 @@ jobs:
           cd k8s-test/node
           git checkout -b "$NEW_BRANCH"
 
-          if git ls-remote --exit-code --heads origin node-aud-v$VERSION; then
+          if git ls-remote --exit-code --heads origin node-test-v$VERSION; then
               echo "Branch $NEW_BRANCH already exists"
               echo "Pulling from $NEW_BRANCH"
               git pull origin $NEW_BRANCH --no-rebase
