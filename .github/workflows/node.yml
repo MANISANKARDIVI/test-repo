@@ -84,7 +84,7 @@ jobs:
       - name: Checkout Kubernetes repo
         run: |
           echo "Cloning Kubernetes repo..."
-          git clone https://github.com/MANISANKARDIVI/k8s-test.git
+          git remote set-url origin "https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/MANISANKARDIVI/k8s-test.git"
           ls -la
           cd k8s-test
           git pull
