@@ -1,97 +1,137 @@
-name: CI/CD Workflow
-
+name: node-pipeline
 on:
   push:
     branches:
-      - main
-      - dev
+      - production
     paths:
-      # - '.github/workflows/node.yml'
-      - 'node/**'
+      - .github/workflows/node.yml
+      - node/**
+
+  pull_request:
+    branches:
+      - production
+    paths:
+      - .github/workflows/node.yml
+      - node/**
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
+  dependency-install:
+    runs-on: ubuntu-24.04
     steps:
-      # Step 1: Check out the code
-      - name: Check out code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js with caching for dependencies
       - name: Set up Node.js with cache
         uses: actions/setup-node@v4
         with:
-          node-version: '16'
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          node-version: "16"
+          cache: npm
+          cache-dependency-path: node/package-lock.json
 
-      - name: Navigate to node directory
-        run: cd node
-
-      # Step 4: Install dependencies
-      - name: Install dependencies
+      - name: Install dependencies and build
         run: |
-          cd node  # Ensure you're in the correct folder where package.json is located
-          npm installX
-
-      # Step 5: Build code
-      - name: Build code
-        run: |
-          cd node  # Ensure you're in the correct folder where package.json is located
+          cd node
+          npm install
           npm run build
 
-      # Step 4: Save the build output as an artifact
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifact
-          path: dist/  # Replace 'dist/' with the correct output directory
+  docker_build_push:
+    runs-on: ubuntu-24.04
+    needs: dependency-install
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read version from VERSION file
+        id: read_version
+        run: |
+          cd node
+          if [ -f VERSION ]; then
+            VERSION=$(cat VERSION | xargs)
+            echo "VERSION=$VERSION" >> $GITHUB_ENV
+          else
+            echo "VERSION file not found!"
+            exit 1
+          fi
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Step 5: Log in to Docker Hub (or other registry)
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          
+
+      - name: Build and push Docker image
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd node
+          docker buildx build -t manisankardivi/node-aud .
+          docker push manisankardivi/node-aud:${{ env.VERSION }}
+
+  k8s-manifest-files_update:
+    runs-on: ubuntu-24.04
+    needs: docker_build_push
+    if: github.ref == 'refs/heads/production'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Read version from VERSION file
-        id: read_version
         run: |
-          # Read the entire content of the VERSION file and trim any surrounding whitespace
-          VERSION=$(cat VERSION | xargs)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Listing files in the repository root:"
+          ls -la
+          echo "Navigating to api directory:"
+          cd node
+          VERSION=$(cat VERSION)
           echo "Version extracted: $VERSION"
-      # Step 6: Build the Docker image
-      - name: Build Docker image with extracted version
+          echo "VERSION=$VERSION" >> $GITHUB_ENV  # Save version to environment variable
+
+      - name: Checkout Kubernetes repo
         run: |
-          docker build -t soubarniya/mynode:${{ env.VERSION }} .
-          docker push soubarniya/mynode:${{ env.VERSION }}
-      - name: Update Kubernetes manifest
+          echo "Cloning Kubernetes repo..."
+          git clone https://github.com/MANISANKARDIVI/k8s-test.git
+          ls -la
+          cd k8s-test
+          git pull
+          git checkout production
+          cd node/production
+          ls -la
+          echo "Using version: $VERSION"
+          echo "Updating image version in deployment.yaml..."
+          sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/node-aud:$VERSION|" k8s-test/node/production/deployment.yaml
+          echo "Image Section after update:"
+          grep "image: ${{ secrets.DOCKER_USERNAME }}/node-aud:" deployment.yaml
+
+      - name: Check for changes and commit if updated
         run: |
-          pwd
-          ls -la
-          git clone https://github.com/Soubarniya/argocd.git
-          ls -la
-          cd argocd
-          ls -la
-          sed -i "s|image: soubarniya/mynode:.*|image: soubarniya/mynode:${{ env.VERSION }}|" node.yaml
-          git status
-          git diff
-          cat node.yaml
-          # Configure Git
-          # git init .
-          git config --global user.email "leosphere2001@gmail.com"
-          git config --global user.name "Soubarniya"
-          
-          # Commit and push changes if there’s an update
-          if git diff --exit-code --quiet; then
-            echo "No changes to commit."
+          ls -la && ls k8s-test/node/production
+          cd k8s-test
+          git config --global user.email "manisankardivi@gmail.com"
+          git config --global user.name "Mani"
+          git add .
+          if git diff --cached --exit-code --quiet; then
+            echo "No changes detected in deployment.yaml. Skipping commit and branch creation."
+            echo "SKIP_BRANCH=true" >> $GITHUB_ENV
           else
-            git add node.yaml
-            git commit -m "Updated node.yaml with version ${{ env.VERSION }} | GitHub Actions Pipeline"
-            git push origin main
+            echo "Changes detected. Committing changes."
+            git commit -m "Updated deployment.yaml for [node] with version $VERSION | GitHub Actions Pipeline"
+            echo "SKIP_BRANCH=false" >> $GITHUB_ENV
           fi
+
+      - name: Create and push new branch with version (if changes exist)
+        if: env.SKIP_BRANCH == 'false' # Only run if changes exist
+        run: |
+          NEW_BRANCH="node-aud-v$VERSION"
+          cd k8s-test/node
+          git checkout -b "$NEW_BRANCH"
+
+          if git ls-remote --exit-code --heads origin node-aud-v$VERSION; then
+              echo "Branch $NEW_BRANCH already exists"
+              echo "Pulling from $NEW_BRANCH"
+              git pull origin $NEW_BRANCH --no-rebase
+          fi
+
+          echo "Pushing branch $NEW_BRANCH to origin..."
+          git push origin "$NEW_BRANCH"
+          echo "Branch $NEW_BRANCH created and pushed successfully."
