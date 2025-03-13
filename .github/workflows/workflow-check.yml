@@ -1,0 +1,32 @@
+---
+name: Workflow Validation
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - '.github/workflows/**'  # Trigger only when workflow files change
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # # Step 2: Lint YAML files for syntax errors
+      # - name: Lint YAML files
+      #   run: |
+      #     sudo apt-get install -y yamllint  # Install yamllint (if not pre-installed)
+      #     yamllint .github/workflows        # Check all workflow YAML files in the directory
+
+      # Optional Step 3: Dry run with GitHub CLI (to simulate workflow run)
+      - name: Validate workflow with GitHub CLI (optional)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run --repo ${{ github.repository }} --dry-run

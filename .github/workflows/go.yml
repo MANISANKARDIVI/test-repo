@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd go-project
-          go mod download
+          go mod XXdownload
           
       - name: Test with the Go CLI
         run: |

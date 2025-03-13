@@ -1,3 +1,4 @@
+---
 name: node-pipeline
 on:
   push:
