@@ -60,7 +60,7 @@ jobs:
         if: github.ref == 'refs/heads/production'
         run: |
           cd node
-          docker buildx build -t manisankardivi/node-test .
+          docker build -t manisankardivi/node-test:${{ env.VERSION }} .
           docker push manisankardivi/node-test:${{ env.VERSION }}
 
   k8s-manifest-files_update:
