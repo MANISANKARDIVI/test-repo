@@ -10,6 +10,8 @@ COPY package.json package-lock.json ./
 # Step 4: Install production dependencies only
 RUN npm ci --omit=dev
 
+RUN npm install -g npm@11.2.0
+
 # Step 5: Copy the rest of the application files
 COPY . .
 
