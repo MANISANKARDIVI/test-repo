@@ -25,7 +25,7 @@ jobs:
       - name: Set up Node.js with cache
         uses: actions/setup-node@v4
         with:
-          node-version: "16"
+          node-version: "18"
           cache: npm
           cache-dependency-path: node/package-lock.json
 
@@ -67,8 +67,8 @@ jobs:
         if: github.ref == 'refs/heads/production'
         run: |
           cd node
-          docker buildx build -t manisankardivi/node-aud .
-          docker push manisankardivi/node-aud:${{ env.VERSION }}
+          docker buildx build -t manisankardivi/node-test .
+          docker push manisankardivi/node-test:${{ env.VERSION }}
 
   k8s-manifest-files_update:
     runs-on: ubuntu-24.04
@@ -82,7 +82,7 @@ jobs:
         run: |
           echo "Listing files in the repository root:"
           ls -la
-          echo "Navigating to api directory:"
+          echo "Navigating to node directory:"
           cd node
           VERSION=$(cat VERSION)
           echo "Version extracted: $VERSION"
@@ -100,9 +100,9 @@ jobs:
           ls -la
           echo "Using version: $VERSION"
           echo "Updating image version in deployment.yaml..."
-          sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/node-aud:$VERSION|" k8s-test/node/production/deployment.yaml
+          sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/node-test:$VERSION|" k8s-test/node/production/deployment.yaml
           echo "Image Section after update:"
-          grep "image: ${{ secrets.DOCKER_USERNAME }}/node-aud:" deployment.yaml
+          grep "image: ${{ secrets.DOCKER_USERNAME }}/node-test:" deployment.yaml
 
       - name: Check for changes and commit if updated
         run: |
