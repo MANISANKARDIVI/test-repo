@@ -95,7 +95,7 @@ jobs:
           echo "Updating image version in deployment.yaml..."
           sed -i "s|image: manisankardivi/node-test:.*|image: manisankardivi/node-test:${{ env.VERSION }}|" deployment.yaml
           echo "Image Section after update:"
-          grep "image: manisankar/node-test:" deployment.yaml
+          cat deployment.yaml
 
       - name: Check for changes and commit if updated
         run: |
