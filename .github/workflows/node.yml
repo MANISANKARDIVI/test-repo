@@ -93,9 +93,9 @@ jobs:
           ls -la
           echo "Using version: $VERSION"
           echo "Updating image version in deployment.yaml..."
-          sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/node-test:${{ env.VERSION }}|" k8s-test/node/production/deployment.yaml
+          sed -i "s|image: .*|image: manisankardivi/node-test:${{ env.VERSION }}|" deployment.yaml
           echo "Image Section after update:"
-          grep "image: ${{ secrets.DOCKER_USERNAME }}/node-test:" deployment.yaml
+          grep "image: manisankar/node-test:" deployment.yaml
 
       - name: Check for changes and commit if updated
         run: |
