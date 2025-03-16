@@ -1,0 +1,17 @@
+---
+name: dependency-install
+on:
+  workflow_call:  # Allows this workflow to be called from other workflows
+
+jobs:
+  install:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies and build
+        run: |
+          cd node
+          npm install
+          npm run build
