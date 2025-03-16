@@ -24,7 +24,7 @@ jobs:
         
       - name: Read version from VERSION file
         run: |
-          VERSION=$(cat VERSION | xargs)
+          VERSION=$(cat node/VERSION | xargs)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Use stored version
