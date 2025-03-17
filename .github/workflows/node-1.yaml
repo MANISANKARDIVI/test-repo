@@ -51,6 +51,7 @@ jobs:
           git branch
           cd node-1/production
           pwd
+          ls -la
           echo "Using version: $VERSION"
           echo "version: $VERSION"
           echo "Updating image version in deployment.yaml..."
