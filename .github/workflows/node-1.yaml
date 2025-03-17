@@ -55,7 +55,7 @@ jobs:
           echo "Using version: $VERSION"
           echo "version: $VERSION"
           echo "Updating image version in deployment.yaml..."
-          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/node-1-test:.*|image: ${{ secrets.DOCKER_USERNAME }}/node-1-test:$VERSION|" deployment.yaml
+          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/node-test:.*|image: ${{ secrets.DOCKER_USERNAME }}/node-1-test:$VERSION|" deployment.yaml
           grep "image: ${{ secrets.DOCKER_USERNAME }}/node-1-test:" deployment.yaml
 
       - name: Check for changes and commit if updated
