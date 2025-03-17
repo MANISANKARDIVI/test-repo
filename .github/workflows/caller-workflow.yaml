@@ -8,10 +8,17 @@ on:
       node_version:
         required: true
         type: string
+    outputs:
+      version:
+        description: "Application version from VERSION file"
+        value: ${{ jobs.dependency.outputs.version }}
 
 jobs:
   dependency:
     runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.get_version.outputs.VERSION }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,42 +28,78 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
 
+      - name: Read VERSION file
+        id: get_version
+        run: |
+          VERSION=$(cat ${{ inputs.service_name }}/VERSION | xargs)
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Install dependencies and build
         run: |
           cd ${{ inputs.service_name }}
           npm install
           npm run build
 
-# name: dependency-install
+# name: Reusable Node Service Workflow
 # on:
-#   workflow_call:  # Allows this workflow to be called from other workflows
+#   workflow_call:
+#     inputs:
+#       service_name:
+#         required: true
+#         type: string
+#       node_version:
+#         required: true
+#         type: string
 
 # jobs:
 #   dependency:
 #     runs-on: ubuntu-24.04
-#     outputs:
-#       version: ${{ steps.get_version.outputs.VERSION }}
 #     steps:
 #       - name: Checkout code
 #         uses: actions/checkout@v4
-        
-#       - name: Set up Node.js with cache
+
+#       - name: Set up Node.js
 #         uses: actions/setup-node@v4
 #         with:
 #           node-version: ${{ inputs.node_version }}
-#           cache: "npm"
-#           cache-dependency-path: "node/package-lock.json"
-
-#       - name: Read VERSION
-#         id: get_version
-#         run: |
-#           # Read from a VERSION file 
-#           VERSION=$(cat node/VERSION | xargs)
-#           echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-#           echo "VERSION is $VERSION"
 
 #       - name: Install dependencies and build
 #         run: |
-#           cd node
+#           cd ${{ inputs.service_name }}
 #           npm install
 #           npm run build
+
+# # name: dependency-install
+# # on:
+# #   workflow_call:  # Allows this workflow to be called from other workflows
+
+# # jobs:
+# #   dependency:
+# #     runs-on: ubuntu-24.04
+# #     outputs:
+# #       version: ${{ steps.get_version.outputs.VERSION }}
+# #     steps:
+# #       - name: Checkout code
+# #         uses: actions/checkout@v4
+        
+# #       - name: Set up Node.js with cache
+# #         uses: actions/setup-node@v4
+# #         with:
+# #           node-version: ${{ inputs.node_version }}
+# #           cache: "npm"
+# #           cache-dependency-path: "node/package-lock.json"
+
+# #       - name: Read VERSION
+# #         id: get_version
+# #         run: |
+# #           # Read from a VERSION file 
+# #           VERSION=$(cat node/VERSION | xargs)
+# #           echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+# #           echo "VERSION is $VERSION"
+
+# #       - name: Install dependencies and build
+# #         run: |
+# #           cd node
+# #           npm install
+# #           npm run build
