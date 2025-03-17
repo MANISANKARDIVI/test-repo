@@ -88,8 +88,8 @@ jobs:
       - name: Create and push new branch with version (if changes exist)
         if: env.SKIP_BRANCH == 'false'
         run: |
-          NEW_BRANCH="release/node-1-test-v$VERSION"
           cd k8s-test
+          NEW_BRANCH="release/node-1-test-v$VERSION"
           git checkout -b "$NEW_BRANCH"
 
           if git ls-remote --exit-code --heads origin $NEW_BRANCH; then
