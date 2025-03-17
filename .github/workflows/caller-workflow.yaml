@@ -33,7 +33,7 @@ jobs:
         run: |
           VERSION=$(cat ${{ inputs.service_name }}/VERSION | xargs)
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies and build
         run: |
