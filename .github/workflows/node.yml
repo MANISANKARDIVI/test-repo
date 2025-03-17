@@ -35,7 +35,7 @@ jobs:
 
   k8s-manifest-files_update:
     needs: [dependency-install, docker-build-push]
-    uses: ./.github/workflows/k8s-update.yaml
+    uses: ./.github/workflows/k8s-manifest.yaml
     with:
         service_name: "node"
         image_name: "node-test"
