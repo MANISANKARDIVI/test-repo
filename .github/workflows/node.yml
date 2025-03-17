@@ -55,6 +55,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
+      - name: Debug VERSION
+        run: echo "Using version: $VERSION"
 
       # - name: Read version from VERSION file
       #   run: |
@@ -101,6 +104,7 @@ jobs:
       - name: Create and push new branch with version (if changes exist)
         if: env.SKIP_BRANCH == 'false' # Only run if changes exist
         run: |
+          echo "Using version: $VERSION"
           NEW_BRANCH="release/node-test-v$VERSION"
           cd k8s-test/node
           git checkout -b "$NEW_BRANCH"
