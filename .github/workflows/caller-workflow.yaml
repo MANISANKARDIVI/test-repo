@@ -17,7 +17,7 @@ jobs:
   dependency:
     runs-on: ubuntu-24.04
     outputs:
-      version: ${{ steps.get_version.outputs.VERSION }}
+      version: ${{ steps.get_version.outputs.version }}
 
     steps:
       - name: Checkout code
@@ -32,7 +32,7 @@ jobs:
         id: get_version
         run: |
           VERSION=$(cat ${{ inputs.service_name }}/VERSION | xargs)
-          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Extracted VERSION: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies and build
@@ -40,6 +40,7 @@ jobs:
           cd ${{ inputs.service_name }}
           npm install
           npm run build
+
 
 # name: Reusable Node Service Workflow
 # on:
