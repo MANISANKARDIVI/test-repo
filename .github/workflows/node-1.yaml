@@ -1,18 +1,18 @@
-name: Node Service Pipeline
+name: Node-1 Service Pipeline
 
 on:
   push:
     branches:
       - production
     paths:
-      - .github/workflows/node-1.yml
+      - .github/workflows/node-1.yaml
       - node-1/**
 
   pull_request:
     branches:
       - production
     paths:
-      - .github/workflows/node-1.yml
+      - .github/workflows/node-1.yaml
       - node-1/**
 
 jobs:
