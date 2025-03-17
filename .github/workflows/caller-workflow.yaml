@@ -17,9 +17,11 @@ jobs:
         run: |
           # Read from a VERSION file 
           VERSION=$(cat node/VERSION | xargs)
+          
+          # Correct way to set output for reusable workflows
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
-          # Share with other jobs via output
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "VERSION is $VERSION"
 
       - name: Install dependencies and build
