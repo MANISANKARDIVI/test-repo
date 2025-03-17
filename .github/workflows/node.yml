@@ -13,7 +13,6 @@ on:
     paths:
       - .github/workflows/node.yml
       - node/**
-
 jobs:
   dependency-install:
     uses: ./.github/workflows/caller-workflow.yaml
