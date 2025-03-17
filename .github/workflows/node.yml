@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: dependency-install
     env:
-      VERSION: ${{ needs.get_version.outputs.version }}
+      VERSION: ${{ needs.dependency-install.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
