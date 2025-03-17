@@ -27,13 +27,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node_version }}
-
+          
       - name: Read VERSION file
         id: get_version
         run: |
           VERSION=$(cat ${{ inputs.service_name }}/VERSION | xargs)
           echo "Extracted VERSION: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          # echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Install dependencies and build
         run: |
