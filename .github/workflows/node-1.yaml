@@ -44,14 +44,14 @@ jobs:
       - name: Build and push Docker image
         if: github.ref == 'refs/heads/production'
         run: |
-          cd node
+          cd node-1
           docker build -t manisankardivi/node-1-test:$VERSION .
           docker push manisankardivi/node-1-test:$VERSION
           docker images
 
   k8s-manifest-files_update:
     runs-on: ubuntu-24.04
-    needs: [dependency-install, docker_build_push]  # 👈 Add dependency-install
+    needs: [dependency-install, docker_build_push]
     env:
       VERSION: ${{ needs.dependency-install.outputs.version }}
     if: github.ref == 'refs/heads/production'
@@ -64,7 +64,7 @@ jobs:
           cd k8s-test
           git pull
           git checkout production
-          cd node/production
+          cd node-1/production
           echo "Using version: $VERSION"
           echo "Updating image version in deployment.yaml..."
           sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/node-1-test:.*|image: ${{ secrets.DOCKER_USERNAME }}/node-1-test:$VERSION|" deployment.yaml
