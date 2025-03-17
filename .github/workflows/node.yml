@@ -56,18 +56,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      - name: Debug VERSION
-        run: echo "Using version: $VERSION"
-
-      # - name: Read version from VERSION file
-      #   run: |
-      #     echo "Listing files in the repository root:"
-      #     ls -la
-      #     echo "Navigating to node directory:"
-      #     cd node
-      #     VERSION=$(cat VERSION)
-      #     echo "Version extracted: $VERSION"
-      #     echo "VERSION=$VERSION" >> $GITHUB_ENV  # Save version to environment variable
+      # - name: Debug VERSION
+      #   run: echo "Using version: $VERSION"
 
       - name: Checkout Kubernetes repo
         run: |
