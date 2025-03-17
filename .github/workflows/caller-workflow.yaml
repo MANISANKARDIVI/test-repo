@@ -15,17 +15,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node_version }}
+          cache: "npm"
+          cache-dependency-path: "node/package-lock.json"
 
       - name: Read VERSION
         id: get_version
         run: |
           # Read from a VERSION file 
           VERSION=$(cat node/VERSION | xargs)
-          
-          # Correct way to set output for reusable workflows
-          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-
           echo "VERSION is $VERSION"
 
       - name: Install dependencies and build
