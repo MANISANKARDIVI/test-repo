@@ -19,6 +19,7 @@ jobs:
     uses: ./.github/workflows/caller-workflow.yaml  # Calling the reusable workflow
     with:
       node_version: "20.19.0"
+      service_name: "node"
 
   docker_build_push:
     runs-on: ubuntu-24.04
