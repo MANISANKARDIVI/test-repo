@@ -4,11 +4,23 @@ on:
   workflow_call:  # Allows this workflow to be called from other workflows
 
 jobs:
-  install:
+  dependency:
     runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.get_version.outputs.VERSION }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Read VERSION (Set Once)
+        id: get_version
+        run: |
+          # Read from a VERSION file 
+          VERSION=$(cat node/VERSION | xargs)
+
+          # Share with other jobs via output
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION is $VERSION"
 
       - name: Install dependencies and build
         run: |
