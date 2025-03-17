@@ -64,8 +64,11 @@ jobs:
           cd k8s-test
           git pull
           git checkout production
+          git branch
           cd node-1/production
+          pwd
           echo "Using version: $VERSION"
+          echo "version: $VERSION"
           echo "Updating image version in deployment.yaml..."
           sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/node-1-test:.*|image: ${{ secrets.DOCKER_USERNAME }}/node-1-test:$VERSION|" deployment.yaml
           grep "image: ${{ secrets.DOCKER_USERNAME }}/node-1-test:" deployment.yaml
