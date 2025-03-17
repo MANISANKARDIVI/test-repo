@@ -29,9 +29,6 @@ jobs:
       VERSION: ${{ needs.dependency-install.outputs.version }}  # ✅ Use the correct variable
 
     steps:
-      - name: Debug VERSION
-        run: echo "VERSION from dependency-install: $VERSION"
-
       - name: Checkout code
         uses: actions/checkout@v4
 
