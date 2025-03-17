@@ -17,7 +17,7 @@ on:
 
 jobs:
   dependency-install:
-    uses: ./.github/workflows/caller-workflow.yaml
+    uses: ./.github/workflows/dependency-install.yaml
     with:
       node_version: "v23.10.0"
       service_name: "node-1"
