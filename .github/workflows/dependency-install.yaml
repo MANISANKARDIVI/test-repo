@@ -35,9 +35,10 @@ jobs:
           echo "Extracted VERSION: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           # echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
       - name: Install ESLint
         run: |
-          npm ci
+          npm install
           npm install eslint --save-dev
 
       - name: Run ESLint with Defaults
