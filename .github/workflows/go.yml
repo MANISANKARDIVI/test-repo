@@ -20,22 +20,28 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.2'
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64
           
       - name: Install dependencies
         run: |
           cd go-project
           go mod XXdownload
+          golangci-lint run
+          golangci-lint run ./...
           
       - name: Test with the Go CLI
         run: |
           cd go-project
           go test ./...
 
-      - name: Build the application
-        run: |
-          cd go-project
-          mkdir -p dist
-          go build -o dist/main ./...
+      # - name: Build the application
+      #   run: |
+      #     cd go-project
+      #     mkdir -p dist
+      #     go build -o dist/main ./...
           
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
