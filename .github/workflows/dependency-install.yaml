@@ -2,7 +2,7 @@ name: Reusable Node Service Workflow
 on:
   workflow_call:
     inputs:
-      service_name:
+      service_directory:
         required: true
         type: string
       node_version:
@@ -31,13 +31,13 @@ jobs:
       - name: Read VERSION file
         id: get_version
         run: |
-          VERSION=$(cat ${{ inputs.service_name }}/VERSION | xargs)
+          VERSION=$(cat ${{ inputs.service_directory }}/VERSION | xargs)
           echo "Extracted VERSION: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           # echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Install dependencies and build
         run: |
-          cd ${{ inputs.service_name }}
+          cd ${{ inputs.service_directory }}
           npm install
           npm run build   
