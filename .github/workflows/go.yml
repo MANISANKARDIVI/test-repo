@@ -20,15 +20,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.2'
-          cache: true  # Enables caching of Go modules
-
-      - name: Restore Go Modules Cache
-        uses: actions/cache@v4
-        with:
-          path: ~/go/pkg/mod
-          key: go-mod-${{ runner.os }}-${{ hashFiles('go-project/go.sum') }}
-          restore-keys: |
-            go-mod-${{ runner.os }}-
 
       - name: Install Dependencies
         run: |
