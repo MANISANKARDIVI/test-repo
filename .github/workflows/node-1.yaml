@@ -34,6 +34,7 @@ jobs:
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
 
   k8s-manifest-files_update:
+    if: github.ref == 'refs/heads/production'
     needs: [dependency-install, docker-build-push]
     uses: ./.github/workflows/k8s-manifest.yaml
     with:
