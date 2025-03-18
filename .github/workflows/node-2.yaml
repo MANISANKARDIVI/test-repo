@@ -1,0 +1,46 @@
+name: Node-1 Service Pipeline
+
+on:
+  push:
+    branches:
+      - production
+    paths:
+      - .github/workflows/node-2.yaml
+      - node-2/**
+
+  pull_request:
+    branches:
+      - production
+    paths:
+      - .github/workflows/node-2.yaml
+      - node-2/**
+
+jobs:
+  dependency-install:
+    uses: ./.github/workflows/dependency-install.yaml
+    with:
+      node_version: "v22.10.0"
+      service_name: "node-2"
+
+  docker-build-push:
+    needs: dependency-install
+    uses: ./.github/workflows/docker-build-push.yaml
+    with:
+      service_directory: "node-2"
+      image_name: "node-2-test"
+      version: ${{ needs.dependency-install.outputs.version }}
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+
+  k8s-manifest-files_update:
+    if: github.ref == 'refs/heads/production'
+    needs: [dependency-install, docker-build-push]
+    uses: ./.github/workflows/k8s-manifest.yaml
+    with:
+        service_directory: "node-2"
+        image_name: "node-1-test"
+        version: ${{ needs.dependency-install.outputs.version }}
+    secrets:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
