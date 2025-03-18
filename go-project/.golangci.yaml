@@ -1,4 +1,3 @@
-# .golangci.yml
 linters:
   enable:
     - golint
@@ -9,16 +8,16 @@ linters:
 
 linters-settings:
   gosec:
-    severity: warning
-    exclude-rules:
-      - G104  # Ignore the rule for hardcoded credentials
+    severity: medium  # Must be 'low', 'medium', or 'high'
+    excludes:
+      - G104  # Corrected exclude property
 
 issues:
   exclude:
     - "error return value not checked"
   max-issues-per-linter: 10
   max-same-issues: 5
-  new-from-rev: "HEAD~1"  # Show only issues introduced in the last commit
+  new-from-rev: "HEAD~1"
 
 output:
   formats:
@@ -30,11 +29,12 @@ output:
 run:
   timeout: 2m
   tests: true
-  build-tags: "integration"
+  build-tags: ["integration"]  # Must be an array
   allow-parallel-runners: true
 
 severity:
   default-severity: error
+
 
 
 # linters:
