@@ -22,8 +22,8 @@ issues:
 
 output:
   formats:
-    - json
-    - checkstyle
+    - format: json
+    - format: checkstyle
   print-issued-lines: true
   sort-results: true
 
