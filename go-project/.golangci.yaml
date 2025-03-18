@@ -1,6 +1,5 @@
 linters:
   enable:
-    - golint
     - errcheck
     - gosec
     - staticcheck
