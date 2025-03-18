@@ -1,0 +1,16 @@
+{
+  "name": "my-node-app",
+  "version": "1.0.0",
+  "description": "A sample Node.js application",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "mkdir -p dist && rsync -av --exclude='dist' ./ dist/",
+    "start": "node ./index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.1"
+  },
+  "author": "sou",
+  "license": "MIT",
+  "keywords": []
+}

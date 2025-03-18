@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mynode-app
+  labels:
+    app: mynode-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mynode-app
+  template:
+    metadata:
+      labels:
+        app: mynode-app
+    spec:
+      containers:
+        - name: mynode-container
+          image: soubarniya/mynode:$(VERSION)  # Ensure this matches the image tag pushed in the GitHub Actions workflow
+          ports:
+            - containerPort: 3000          # Change to your app's running port
+          env:
+            - name: NODE_ENV
+              value: "production"          # Example environment variable
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mynode-service
+spec:
+  selector:
+    app: mynode-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000                    # Match the container port
+  type: LoadBalancer                      # Or use ClusterIP, NodePort based on requirements
