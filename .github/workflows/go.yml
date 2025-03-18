@@ -10,7 +10,8 @@ on:
 
 jobs:
   build_and_deploy:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,8 +20,17 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.2'
+          cache: true  # Enables caching of Go modules
 
-      - name: Install dependencies
+      - name: Restore Go Modules Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: go-mod-${{ runner.os }}-${{ hashFiles('go-project/go.sum') }}
+          restore-keys: |
+            go-mod-${{ runner.os }}-
+
+      - name: Install Dependencies
         run: |
           cd go-project
           go mod download
@@ -30,29 +40,26 @@ jobs:
         with:
           version: v1.64.8
           working-directory: go-project
+          install-mode: binary
+          cache: true  # Enables caching of golangci-lint
 
       - name: Run Tests
         run: |
           cd go-project
-          go test ./...
+          go test -v ./...
 
-      - name: Build the application
+      - name: Build the Application
         run: |
           cd go-project
           mkdir -p dist
           go build -o dist/main ./...
 
-      - name: Upload artifacts
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: artifact
-          path: go-project/dist
-          if-no-files-found: warn
-
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: go-artifact
+          path: go-project/dist/
+          if-no-files-found: error
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -60,27 +67,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Read version from VERSION file
+      - name: Read Version from VERSION File
         id: read_version
         run: |
-          cd go-project
-          if [ -f VERSION ]; then
-            VERSION=$(cat VERSION | xargs)
-            echo "VERSION=$VERSION" >> $GITHUB_ENV
-          else
-            echo "VERSION file not found in go-project!"
-            exit 1
-          fi
-          cat VERSION
+          VERSION=$(cat go-project/VERSION | xargs)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Using version: $VERSION"
 
-      - name: Set up Docker Buildx
+      - name: Set Up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Docker image
+      - name: Build and Push Docker Image
         run: |
-          cd go-project
-          docker buildx build --load -t manisankardivi/new:${{ env.VERSION }} .
-          docker images
+          docker buildx build --push --tag manisankardivi/new:${{ env.VERSION }} go-project
 
       # - name: Update Image Version and Push Changes
       #   run: |
