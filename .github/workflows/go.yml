@@ -3,8 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
-      - dev
+      - production
     paths:
       - '.github/workflows/go.yml'
       - 'go-project/**'
@@ -20,6 +19,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.2'
+          
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
