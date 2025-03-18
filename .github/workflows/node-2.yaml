@@ -20,7 +20,7 @@ jobs:
     uses: ./.github/workflows/dependency-install.yaml
     with:
       node_version: "v22.10.0"
-      service_name: "node-2"
+      service_directory: "node-2"
 
   docker-build-push:
     needs: dependency-install
