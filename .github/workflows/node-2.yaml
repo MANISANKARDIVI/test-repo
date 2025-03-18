@@ -39,7 +39,7 @@ jobs:
     uses: ./.github/workflows/k8s-manifest.yaml
     with:
         service_directory: "node-2"
-        image_name: "node-1-test"
+        image_name: "node-2-test"
         version: ${{ needs.dependency-install.outputs.version }}
     secrets:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
