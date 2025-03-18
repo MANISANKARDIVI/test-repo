@@ -3,7 +3,7 @@ name: Reusable K8s Manifest Update
 on:
   workflow_call:
     inputs:
-      service_name:
+      service_directory:
         required: true
         type: string
       image_name:
@@ -30,7 +30,7 @@ jobs:
           cd k8s-test
           git pull
           git checkout production
-          cd ${{ inputs.service_name }}/production
+          cd ${{ inputs.service_directory }}/production
           echo "Using version: ${{ inputs.version }}"
           echo "Updating image version in deployment.yaml..."
           sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:.*|image: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ inputs.version }}|" deployment.yaml
@@ -47,7 +47,7 @@ jobs:
             echo "SKIP_BRANCH=true" >> $GITHUB_ENV
           else
             echo "Changes detected. Committing changes."
-            git commit -m "Updated deployment.yaml for [${{ inputs.service_name }}] with version ${{ inputs.version }} | GitHub Actions Pipeline"
+            git commit -m "Updated deployment.yaml for [${{ inputs.service_directory }}] with version ${{ inputs.version }} | GitHub Actions Pipeline"
             echo "SKIP_BRANCH=false" >> $GITHUB_ENV
           fi
 
