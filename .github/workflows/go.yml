@@ -31,7 +31,7 @@ jobs:
         with:
           version: v1.64.8
           working-directory: go-project
-          install-mode: binary
+          install-mode: none
           
       - name: Run Tests
         run: |
