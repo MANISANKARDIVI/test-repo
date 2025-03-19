@@ -41,11 +41,11 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           # echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      # - name: Install ESLint
-      #   run: |
-      #     cd ${{ inputs.service_directory }}
-      #     npm install
-      #     npm install eslint --save-dev
+      - name: Install ESLint
+        run: |
+          cd ${{ inputs.service_directory }}
+          npm install
+          npm install eslint --save-dev
 
       - name: Super-linter
         uses: super-linter/super-linter@v7.3.0
