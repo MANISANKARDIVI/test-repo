@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "build": "mkdir -p dist && rsync -av --exclude='dist' ./ dist/",
-    "start": "node ./index.js"
+    "start": "node ./index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
