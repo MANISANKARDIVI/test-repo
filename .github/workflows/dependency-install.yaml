@@ -17,10 +17,10 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.get_version.outputs.version }}
-    # permissions:
-    #   contents: read
-    #   packages: read
-    #   statuses: write
+    permissions:
+      contents: read
+      packages: read
+      # statuses: write
 
     steps:
       - name: Checkout code
