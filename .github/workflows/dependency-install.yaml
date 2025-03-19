@@ -43,6 +43,7 @@ jobs:
 
       - name: Install ESLint
         run: |
+          cd ${{ inputs.service_directory }}
           npm install
           npm install eslint --save-dev
 
