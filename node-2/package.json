@@ -6,6 +6,8 @@
   "scripts": {
     "build": "mkdir -p dist && rsync -av --exclude='dist' ./ dist/",
     "start": "node ./index.js"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "express": "^4.21.1"
