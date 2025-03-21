@@ -37,7 +37,7 @@ jobs:
     needs: docker-build-push
     uses: ./.github/workflows/k8s-manifest.yaml
     with:
-        service_name: "node-1"
+        service_directory: "node-1"
         image_name: "node-1-test"
         version: ${{ needs.dependency-install.outputs.version }}
     secrets:
