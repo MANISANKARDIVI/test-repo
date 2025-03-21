@@ -5,10 +5,10 @@ on:
       service_directory:
         required: true
         type: string
-      node_version:
+      node-version:
         required: false
         type: string
-      go_version:
+      go-version:
         required: false
         type: string
       language:
