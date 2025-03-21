@@ -20,7 +20,7 @@ on:
     outputs:
         version:
           description: Application version from VERSION file
-          value: ${{ jobs.dependency.outputs.version }}
+          value: ${{ jobs.docker-build-push.outputs.version }}
 
 jobs:
   docker-build-push:
