@@ -20,7 +20,7 @@ jobs:
     uses: ./.github/workflows/dependency-install.yaml
     with:
       node_version: "20.19.0"
-      service_name: "node"
+      service_directory: "node"
 
   docker-build-push:
     needs: dependency-install
@@ -37,7 +37,7 @@ jobs:
     needs: [dependency-install, docker-build-push]
     uses: ./.github/workflows/k8s-manifest.yaml
     with:
-        service_name: "node"
+        service_directory: "node"
         image_name: "node-test"
         version: ${{ needs.docker-build-push.outputs.version }}
     secrets:
