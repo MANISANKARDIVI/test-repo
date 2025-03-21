@@ -9,28 +9,6 @@ on:
       - 'go-project/**'
 
 jobs:
-  build_and_deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      name: Go-Api CI Pipeline
-
-on:
-  push:
-    branches:
-      - production
-    paths:
-      - ".github/workflows/go-api.yaml"
-      - "api/*"
-
-  pull_request:
-    branches:
-      - master
-    paths:
-      - ".github/workflows/go-api.yaml"
-      - "api/*"
-
-jobs:
   dependency:
     uses: ./.github/workflows/dependency-install.yaml
     with:
