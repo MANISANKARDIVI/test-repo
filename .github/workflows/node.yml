@@ -20,6 +20,7 @@ jobs:
     with:
       node_version: "20.19.0"
       service_directory: "node"
+      language: "node"
 
   docker-build-push:
     needs: dependency-install
