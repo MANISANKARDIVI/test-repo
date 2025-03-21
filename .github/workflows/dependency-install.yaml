@@ -5,10 +5,10 @@ on:
       service_directory:
         required: true
         type: string
-      node-version:
+      node_version:
         required: false
         type: string
-      go-version:
+      go_version:
         required: false
         type: string
       language:
@@ -30,7 +30,7 @@ jobs:
         if: ${{ inputs.language == 'node' }} # Condition for Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs.version }}
+          node_version: ${{ inputs.version }}
           cache: "npm"
           cache-dependency-path: ${{ inputs.service_directory }}
 
@@ -45,7 +45,7 @@ jobs:
         if: ${{ inputs.language == 'go' }} # Condition for Go
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ inputs.version }}
+          go_version: ${{ inputs.version }}
           cache-dependency-path: "${{ inputs.service_directory }}/go.sum"
 
       - name: Install Go dependencies
