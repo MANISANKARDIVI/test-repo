@@ -8,9 +8,9 @@ on:
       node-version:
         required: true
         type: string
-      go-version:
-        required: true
-        type: string
+      # go-version:
+      #   required: true
+      #   type: string
       language:
         required: true
         type: string
@@ -27,7 +27,6 @@ jobs:
 
       # Node.js Setup
       - name: Set up Node.js with cache
-        if: ${{ inputs.language == 'node' }} # Condition for Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.node-version }}
@@ -35,25 +34,22 @@ jobs:
           cache-dependency-path: ${{ inputs.service_directory }}
 
       - name: Install Node.js dependencies
-        if: ${{ inputs.language == 'node' }} # Condition for Node
         run: |
           cd ${{ inputs.service_directory }}
           npm install
 
-      # Go Setup
-      - name: Set up Go with cache
-        if: ${{ inputs.language == 'go' }} # Condition for Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ inputs.go-version }}
-          cache-dependency-path: "${{ inputs.service_directory }}/go.sum"
+      # # Go Setup
+      # - name: Set up Go with cache
+      #   uses: actions/setup-go@v5
+      #   with:
+      #     go-version: ${{ inputs.go-version }}
+      #     cache-dependency-path: "${{ inputs.service_directory }}/go.sum"
 
-      - name: Install Go dependencies
-        if: ${{ inputs.language == 'go' }} # Condition for Go
-        run: |
-          cd ${{ inputs.service_directory }}
-          go mod tidy
-          go mod download
+      # - name: Install Go dependencies
+      #   run: |
+      #     cd ${{ inputs.service_directory }}
+      #     go mod tidy
+      #     go mod download
 
       # - name: Install ESLint
       #   run: |
