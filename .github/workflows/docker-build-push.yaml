@@ -9,9 +9,6 @@ on:
       image_name:
         required: true
         type: string
-      version:
-        required: true
-        type: string
     secrets:
       DOCKER_USERNAME:
         required: true
@@ -50,6 +47,6 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           cd ${{ inputs.service_directory }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ inputs.version }} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ inputs.version }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ steps.get_version.outputs.version }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ steps.get_version.outputs.version }}
           docker images
