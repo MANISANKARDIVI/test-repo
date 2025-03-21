@@ -29,7 +29,7 @@ jobs:
     with:
       service_directory: "node-2"
       image_name: "node-2-test"
-      version: ${{ needs.dependency-install.outputs.version }}
+      # version: ${{ needs.dependency-install.outputs.version }}
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
