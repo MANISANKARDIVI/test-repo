@@ -47,6 +47,6 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           cd ${{ inputs.service_directory }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:$VERSION .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:$VERSION
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ inputs.version }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ inputs.version }}
           docker images
