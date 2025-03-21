@@ -14,7 +14,6 @@ on:
     paths:
       - .github/workflows/node.yml
       - node/**
-
 jobs:
   dependency-install:
     uses: ./.github/workflows/dependency-install.yaml
@@ -44,7 +43,7 @@ jobs:
     secrets:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  
+
     # needs: [dependency-install, docker-build-push]
     # env:
     #   VERSION: ${{ needs.dependency-install.outputs.version }}
