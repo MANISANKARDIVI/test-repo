@@ -16,7 +16,6 @@ jobs:
       service_directory: "go-project"
       language: "go"
 
- 
       # - name: Checkout code
       #   uses: actions/checkout@v4
       #   with:
