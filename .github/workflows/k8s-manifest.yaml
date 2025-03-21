@@ -35,7 +35,8 @@ jobs:
           echo "Updating image version in deployment.yaml..."
           sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:.*|image: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ inputs.version }}|" deployment.yaml
           grep "image: ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:" deployment.yaml
-          cat ${{ inputs.version }}
+          echo "Version: ${{ inputs.version }}"  # ✅ Fixed this line
+
 
       - name: Check for changes and commit if updated
         run: |
