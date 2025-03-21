@@ -42,11 +42,14 @@ jobs:
         run: |
           VERSION=$(cat ${{ inputs.service_directory }}/VERSION | xargs)
           echo "Extracted VERSION: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_ENV"  # Set it as an environment variable
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Build and Push Docker Image
         run: |
           cd ${{ inputs.service_directory }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ steps.get_version.outputs.version }} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ steps.get_version.outputs.version }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:$version .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:$version
           docker images
+        env:
+          version: ${{ steps.get_version.outputs.version }}  # Ensure version is available
