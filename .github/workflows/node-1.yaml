@@ -33,7 +33,7 @@ jobs:
 
   k8s-manifest-files_update:
     if: github.ref == 'refs/heads/production'
-    needs: docker-build-push
+    needs: [dependency-install, docker-build-push]
     uses: ./.github/workflows/k8s-manifest.yaml
     with:
         service_directory: "node-1"
