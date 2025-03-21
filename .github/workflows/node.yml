@@ -18,7 +18,7 @@ jobs:
   dependency-install:
     uses: ./.github/workflows/dependency-install.yaml
     with:
-      node_version: "20.19.0"
+      node-version: "20.19.0"
       service_directory: "node"
       language: "node"
 
