@@ -12,7 +12,7 @@ jobs:
   dependency:
     uses: ./.github/workflows/dependency-install.yaml
     with:
-      go_version: "1.20.3"
+      go-version: "1.20.3"
       service_directory: "go-project"
       language: "go"
 
