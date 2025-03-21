@@ -9,6 +9,9 @@ on:
       image_name:
         required: true
         type: string
+      version:
+        required: true
+        type: string
     secrets:
       DOCKER_USERNAME:
         required: true
