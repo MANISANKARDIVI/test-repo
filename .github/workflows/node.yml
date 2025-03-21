@@ -17,7 +17,7 @@ on:
 
 jobs:
   dependency-install:
-    uses: ./.github/workflows/dependency-install.yaml
+    uses: ./.github/workflows/dependency_install.yaml
     with:
       node-version: "20.19.0"
       service_directory: "node"
@@ -25,7 +25,7 @@ jobs:
 
   docker-build-push:
     needs: dependency-install
-    uses: ./.github/workflows/docker-build-push.yaml
+    uses: ./.github/workflows/docker_build_push.yaml
     with:
       service_directory: "node"
       image_name: "node-test"
