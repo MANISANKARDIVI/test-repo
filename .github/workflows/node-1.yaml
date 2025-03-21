@@ -17,14 +17,14 @@ on:
 
 jobs:
   dependency-install:
-    uses: ./.github/workflows/dependency-install.yaml
+    uses: ./.github/workflows/dependency_install.yaml
     with:
-      node-version: "v23.10.0"
+      node-version: "22"
       service_name: "node-1"
 
   docker-build-push:
     needs: dependency-install
-    uses: ./.github/workflows/docker-build-push.yaml
+    uses: ./.github/workflows/docker_build_push.yaml
     with:
       service_directory: "node-1"
       image_name: "node-1-test"
@@ -35,7 +35,7 @@ jobs:
 
   k8s-manifest-files_update:
     if: github.ref == 'refs/heads/production'
-    needs: [dependency-install, docker-build-push]
+    needs: docker-build-push
     uses: ./.github/workflows/k8s-manifest.yaml
     with:
         service_name: "node-1"
