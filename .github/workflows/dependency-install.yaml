@@ -1,31 +1,56 @@
-name: Reusable Node Service Workflow
+name: Go-Dependency-reusable
 on:
   workflow_call:
     inputs:
       service_directory:
         required: true
         type: string
-      node_version:
+      go_version:
         required: true
         type: string
+      language:
+        required: true
+        type: string
+      cache-dependency-path:
+        required: true
+        type: string
+
 jobs:
   dependency:
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      packages: read
-      statuses: none
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Set up Node.js
+      # Node.js Setup
+      - name: Set up Node.js with cache
+        if: ${{ inputs.language == 'node' }} # Condition for Node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs.node_version }}
+          node-version: ${{ inputs.version }}
+          cache: "npm"
+          cache-dependency-path: ${{ inputs.service_directory }}
+
+      - name: Install Node.js dependencies
+        if: ${{ inputs.language == 'node' }} # Condition for Node
+        run: |
+          cd ${{ inputs.service_directory }}
+          npm install
+
+      # Go Setup
+      - name: Set up Go with cache
+        if: ${{ inputs.language == 'go' }} # Condition for Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.version }}
+          cache-dependency-path: "${{ inputs.service_directory }}/go.sum"
+
+      - name: Install Go dependencies
+        if: ${{ inputs.language == 'go' }} # Condition for Go
+        run: |
+          cd ${{ inputs.service_directory }}
+          go mod tidy
+          go mod download
 
       # - name: Install ESLint
       #   run: |
@@ -38,10 +63,4 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #     VALIDATE_ALL_CODEBASE: false
-      #     FILTER_REGEX_EXCLUDE: "node_modules/.*"
-
-      - name: Install dependencies and build
-        run: |
-          cd ${{ inputs.service_directory }}
-          npm install
-          npm run build   
+      #     FILTER_REGEX_EXCLUDE: "node_modules/.*"  
