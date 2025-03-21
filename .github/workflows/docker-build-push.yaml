@@ -23,7 +23,7 @@ jobs:
   docker-build-push:
     runs-on: ubuntu-24.04
     outputs:
-      version: ${{ steps.get_version.outputs.version }}
+      version: ${{ steps.get_version.outputs.version }}  # Correct output reference
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,14 +42,14 @@ jobs:
         run: |
           VERSION=$(cat ${{ inputs.service_directory }}/VERSION | xargs)
           echo "Extracted VERSION: $VERSION"
-          echo "version=$VERSION" >> "$GITHUB_ENV"  # Set it as an environment variable
+          echo "version=$VERSION" >> "$GITHUB_ENV"  # Make version available in next steps
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo $GITHUB_OUTPUT
-          echo $GITHUB_ENV
 
       - name: Build and Push Docker Image
         run: |
           cd ${{ inputs.service_directory }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ jobs.docker-build-push.outputs.version }} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:${{ jobs.docker-build-push.outputs.version }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:$version .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:$version
           docker images
+        env:
+          version: ${{ steps.get_version.outputs.version }}  # Correct way to pass step output
