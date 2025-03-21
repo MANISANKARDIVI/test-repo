@@ -12,7 +12,7 @@ on:
         required: true
         type: string
       cache-dependency-path:
-        required: true
+        required: false
         type: string
 
 jobs:
