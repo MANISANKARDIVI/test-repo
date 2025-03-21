@@ -28,7 +28,7 @@ jobs:
     with:
       service_directory: "node"
       image_name: "node-test"
-      version: ${{ needs.docker-build-push.outputs.version }}
+      # version: ${{ needs.docker-build-push.outputs.version }}
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
