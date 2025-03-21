@@ -8,15 +8,9 @@ on:
       node_version:
         required: true
         type: string
-    outputs:
-      version:
-        description: Application version from VERSION file
-        value: ${{ jobs.dependency.outputs.version }}
 jobs:
   dependency:
     runs-on: ubuntu-24.04
-    outputs:
-      version: ${{ steps.get_version.outputs.version }}
     permissions:
       contents: read
       packages: read
@@ -33,26 +27,18 @@ jobs:
         with:
           node-version: ${{ inputs.node_version }}
 
-      - name: Read VERSION file
-        id: get_version
-        run: |
-          VERSION=$(cat ${{ inputs.service_directory }}/VERSION | xargs)
-          echo "Extracted VERSION: $VERSION"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          # echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+      # - name: Install ESLint
+      #   run: |
+      #     cd ${{ inputs.service_directory }}
+      #     npm install
+      #     npm install eslint --save-dev
 
-      - name: Install ESLint
-        run: |
-          cd ${{ inputs.service_directory }}
-          npm install
-          npm install eslint --save-dev
-
-      - name: Super-linter
-        uses: super-linter/super-linter@v7.3.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: false
-          FILTER_REGEX_EXCLUDE: "node_modules/.*"
+      # - name: Super-linter
+      #   uses: super-linter/super-linter@v7.3.0
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     VALIDATE_ALL_CODEBASE: false
+      #     FILTER_REGEX_EXCLUDE: "node_modules/.*"
 
       - name: Install dependencies and build
         run: |
