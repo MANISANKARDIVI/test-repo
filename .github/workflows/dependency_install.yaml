@@ -11,9 +11,6 @@ on:
       # go-version:
       #   required: true
       #   type: string
-      language:
-        required: true
-        type: string
       cache-dependency-path:
         required: false
         type: string
