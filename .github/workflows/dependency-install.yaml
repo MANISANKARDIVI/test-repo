@@ -5,8 +5,11 @@ on:
       service_directory:
         required: true
         type: string
+      node_version:
+        required: false
+        type: string
       go_version:
-        required: true
+        required: false
         type: string
       language:
         required: true
