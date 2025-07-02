@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.2"
   },
   "author": "sou",
   "license": "MIT",
