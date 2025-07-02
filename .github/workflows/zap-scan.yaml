@@ -1,15 +1,18 @@
+name: "Zap-Scanning"
+
 on:
-  workflow_dispatch:
   schedule:
-    # At 01:00.
-    - cron:  "*/6 * * * *"
+    - cron: "0/5 * * * *"
+  workflow_dispatch:
 
 jobs:
-  zap_scan:
-    runs-on: ubuntu-latest
-    name: Scan ZAP website
+  release:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
         
       - name: ZAP Scan
