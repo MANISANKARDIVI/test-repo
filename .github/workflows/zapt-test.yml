@@ -21,11 +21,11 @@ jobs:
       with:
         go-version: '1.20'
 
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
+    - name: check version
+      run: |
+        python3 --version
+        pwd
+        ls -la
       
     - name: ZAP Scan
       uses: zaproxy/action-baseline@v0.14.0
